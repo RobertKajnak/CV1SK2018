@@ -1,5 +1,7 @@
 *.jl.cov
-*.asv
 *.jl.*.cov
 *.jl.mem
+*.asv
+*.pdf
 deps/deps.jl
+photometric/*
