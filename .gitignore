@@ -4,4 +4,4 @@
 *.asv
 *.pdf
 deps/deps.jl
-photometric/*
+**/photometric/
