@@ -3,7 +3,7 @@ close all;
 
 %% load files
 awb = imread('awb.jpg');
-awb= imread('garden.jpg');
+%awb= imread('garden.jpg');
 
 %remove gamma correction from .jpg 
 %awbc = rgb2lin(awb);
@@ -13,20 +13,14 @@ G = awb(:,:,2);
 B = awb(:,:,3);
 
 %% perform color correction
-percentile = 30*255/100;
+percentile = 10*255/100;
 
-pruning = 2;
+pruning = 0;
 if pruning == 0
     disp('No pruning:');
     mR = mean(mean(R));
 	mG = mean(mean(G));
     mB = mean(mean(B));
-elseif pruning ==1
-    disp('Separate-channel pruning');
-    mR = mean(mean(R(R>percentile & R<255-percentile)));
-    mG = mean(mean(G(G>percentile & G<255-percentile)));
-    mB = mean(mean(B(B>percentile & B<255-percentile)));
-    [x,i]=find(~B(B>percentile & B<255-percentile))
 else
     disp('Luminosity pruning');
     mR = mean(mean(R((R+G+B)/3>percentile & (R+G+B)/3<255-percentile)));
@@ -39,6 +33,7 @@ R = R+ (128-mR);
 G = G+ (128-mG);
 B = B+ (128-mB);
 
+%reconstruct image from channels
 corrected = R;
 corrected(:,:,2)=G;
 corrected(:,:,3)=B;
@@ -47,6 +42,7 @@ cR = mean(mean(corrected(:,:,1)));
 cG = mean(mean(corrected(:,:,2)));
 cB = mean(mean(corrected(:,:,3)));
 
+%test distance from target
 target = [128.0,128.0,128.0];
 
 fprintf('The avarage has been corrected from MSE = %d, values of RBG channels of:\n',mse([mR,mG,mB],target));
@@ -55,6 +51,9 @@ fprintf('to MSE = %d with channel values:\n',mse([cR,cG,cB],target));
 disp([cR,cG,cB]);
 %% display result
 figure
+
+%awb = lin2rgb(awb)
+%corrected = lin2rgb(corrected)
 
 subplot(1,2,1);
 imshow(awb);
