@@ -8,7 +8,7 @@ function [Gx, Gy, im_mag,im_dir] = compute_gradient(image)
     Gx = zeros(s);
     Gy = Gx;
     im_mag = Gx;
-    im_dir = Gx;
+    im_dir = zeros(s,'double');
     
     for i = 2:s(1)-1
         for j= 2:s(2)-1
@@ -24,5 +24,10 @@ function [Gx, Gy, im_mag,im_dir] = compute_gradient(image)
     end
     
     im_dir = im_dir*128*2/pi+127;
+    
+    %Gx=imfilter(image,double(Sx));
+    %Gy=imfilter(image,double(Sy));
+    %im_mag = sqrt(Gx.^2+Gy.^2);
+    %im_dir = atan(Gx./Gy);
 end
 
