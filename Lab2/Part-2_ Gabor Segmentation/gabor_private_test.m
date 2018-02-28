@@ -13,8 +13,8 @@ psi = 0;
 gamma = 0.5;
 
 gab = createGabor( sigma, theta, lambda, psi, gamma );
-min(min(gab))
-max(max(gab))
+%min(min(gab))
+%max(max(gab))
 
 
 figure;

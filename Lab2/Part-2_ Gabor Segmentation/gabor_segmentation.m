@@ -1,7 +1,7 @@
 %% Hyperparameters
 k        = 2;      % number of clusters in k-means algorithm. By default, 
                    % we consider k to be 2 in foreground-background segmentation task.
-image_id = 'Robin-1'; % Identifier to switch between input images.
+image_id = 'Kobi'; % Identifier to switch between input images.
                    % Possible ids: 'Kobi',    'Polar', 'Robin-1'
                    %               'Robin-2', 'Cows'
 
@@ -15,8 +15,8 @@ smoothingFlag = false;   %  Set to true to postprocess filter outputs.
 %% Read image
 switch image_id
     case 'Kobi'
-        img = imread('kobi.png');
-        resize_factor = 0.25;
+        img = imread('./data/kobi.png');
+        resize_factor = 0.5;
     case 'Polar'
         img = imread('./data/polar-bear-hiding.jpg');
         resize_factor = 0.75;
