@@ -1,5 +1,4 @@
 function [ imOut ] = denoise( image, kernel_type, varargin)
-% make sure image values are doubles
 switch kernel_type
     case 'box'
         kernel_size = varargin{1};
