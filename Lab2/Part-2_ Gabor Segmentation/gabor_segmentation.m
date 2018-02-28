@@ -1,7 +1,7 @@
 %% Hyperparameters
 k        = 2;      % number of clusters in k-means algorithm. By default, 
                    % we consider k to be 2 in foreground-background segmentation task.
-image_id = 'Kobi'; % Identifier to switch between input images.
+image_id = 'Robin-1'; % Identifier to switch between input images.
                    % Possible ids: 'Kobi',    'Polar', 'Robin-1'
                    %               'Robin-2', 'Cows'
 
@@ -9,8 +9,8 @@ image_id = 'Kobi'; % Identifier to switch between input images.
 err_msg  = 'Image not available.';
 
 % Control settings
-visFlag       = false;    %  Set to true to visualize filter responses.
-smoothingFlag = true;   %  Set to true to postprocess filter outputs.
+visFlag       = true;    %  Set to true to visualize filter responses.
+smoothingFlag = false;   %  Set to true to postprocess filter outputs.
 
 %% Read image
 switch image_id
@@ -133,8 +133,10 @@ fprintf('--------------------------------------\n')
 %            explain what works better and why shortly in the report.
 featureMaps = cell(length(gaborFilterBank),1);
 for jj = 1 : length(gaborFilterBank)
-    real_out =  % \\TODO: filter the grayscale input with real part of the Gabor
-    imag_out =  % \\TODO: filter the grayscale input with imaginary part of the Gabor
+    real_out = imfilter(img_gray,gaborFilterBank(jj).filterPairs(1));
+    % \\TODO: filter the grayscale input with real part of the Gabor
+    imag_out =  imfilter(img_gray,gaborFilterBank(jj).filterPairs(2));
+    % \\TODO: filter the grayscale input with imaginary part of the Gabor
     featureMaps{jj} = cat(3, real_out, imag_out);
     
     % Visualize the filter responses if you wish.
@@ -158,7 +160,7 @@ featureMags =  cell(length(gaborFilterBank),1);
 for jj = 1:length(featureMaps)
     real_part = featureMaps{jj}(:,:,1);
     imag_part = featureMaps{jj}(:,:,2);
-    featureMags{jj} = % \\TODO: Compute the magnitude here
+    featureMags{jj} = sqrt(double((real_part.^2+imag_part.^2)));% \\TODO: Compute the magnitude here
     
     % Visualize the magnitude response if you wish.
     if visFlag
@@ -188,6 +190,10 @@ if smoothingFlag
         % i)  filter the magnitude response with appropriate Gaussian kernels
         % ii) insert the smoothed image into features(:,:,jj)
     %END_FOR
+    for i=1:length(featureMags)
+        h = fspecial('gaussian',[5,5],0.5);
+        features(:,:,i) = imfilter(featureMags{i},h);
+    end
 else
     % Don't smooth but just insert magnitude images into the matrix
     % called features.
@@ -208,7 +214,8 @@ features = reshape(features, numRows * numCols, []);
 % \\ Hint: see http://ufldl.stanford.edu/wiki/index.php/Data_Preprocessing
 %          for more information. \\
 
-features = % \\ TODO: i)  Implement standardization on matrix called features. 
+features = (features - mean(features(:)))/std(features(:));
+% \\ TODO: i)  Implement standardization on matrix called features. 
            %          ii) Return the standardized data matrix.
 
 
@@ -227,7 +234,8 @@ imshow(feature2DImage,[]), title('Pixel representation projected onto first PC')
 % \\ Hint-2: use the parameter k defined in the first section when calling
 %            MATLAB's built-in kmeans function.
 tic
-pixLabels = % \\TODO: Return cluster labels per pixel
+pixLabels = kmeans(features,k);
+% \\TODO: Return cluster labels per pixel
 ctime = toc;
 fprintf('Clustering completed in %.3f seconds.\n', ctime);
 
