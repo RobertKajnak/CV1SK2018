@@ -158,7 +158,7 @@ featureMags =  cell(length(gaborFilterBank),1);
 for jj = 1:length(featureMaps)
     real_part = featureMaps{jj}(:,:,1);
     imag_part = featureMaps{jj}(:,:,2);
-    featureMags{jj} = (double(real_part).^2 + double(imag_part).^2).^(1/2);% \\TODO: Compute the magnitude here
+    featureMags{jj} = sqrt(double((real_part.^2+imag_part.^2)));% \\TODO: Compute the magnitude here
     
     % Visualize the magnitude response if you wish.
     if visFlag
@@ -185,7 +185,7 @@ features = zeros(numRows, numCols, length(featureMags));
 if smoothingFlag
     % \\TODO:
     for jj = 1:length(featureMags)
-        features(:, :, jj) = imgaussfilt(featureMags{jj}, gaborFilterBank(jj).sigma);
+        features(:, :, jj) = imgaussfilt(featureMags{jj}, 12*gaborFilterBank(jj).sigma);
     end
     %FOR_LOOP
         % i)  filter the magnitude response with appropriate Gaussian kernels
