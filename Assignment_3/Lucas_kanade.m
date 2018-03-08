@@ -13,12 +13,16 @@
 
 %% helper functions
 
-function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW)
+function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     % DEMO_LUCAS_KANADE Demonstrates the Lucas_Kanade algorithm
     % implementation
     %   REGIONH - OPTIONAL. the heigth of each region. Default value = 15
     %   REGIONH - OPTIONAL. the width of each region. If height speicifed, 
     %       but not width: regionW=regionH. If neither specified: value = 15
+    if nargin==0
+        "Do the demo here"
+        return
+    end
     if nargin==3
         regionW = regionH;
     end
@@ -26,21 +30,42 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW)
         regionH = 15;
         regionW = 15;
     end
-   
-    [Ix,Iy,It] = getDerivatives(image1,image2);
     h=regionH;
     w=regionW;
     
-    %split optical vectors
-    sIx = split_nonoverlap(Ix,h,w);
-    sIy = split_nonoverlap(Iy,h,w);
-    sIt = split_nonoverlap(It,h,w);
+    if nargin >= 6
+            im1 = image1;
+            im2 = image2;
+            image1 = image1(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
+            image2 = image2(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
+    end
+    
+    [Ix,Iy,It] = getDerivatives(image1,image2);
+    
 
+    %split optical vectors
+    Ix = split_nonoverlap(Ix,h,w);
+    Iy = split_nonoverlap(Iy,h,w);
+    It = split_nonoverlap(It,h,w);
+
+    
     %get speeds
-    [V] = getSpeeds(sIx,sIy,sIt);
+    [V] = getSpeeds(Ix,Iy,It);
 
     %display images
-    [X,Y] = speedVectorOverlay(image1,V,2);
+    if nargin <5
+        [X,Y] = speedVectorOverlay(image1,V,2);
+        else
+        figure;
+        imshow(image1);
+        figure;
+        imshow(im1);
+        hold on;
+        scatter(x,y,100,'r');
+        quiver(x,y,V(:,:,1)*20,V(:,:,2)*20);
+        hold off;
+        %[X,Y] = speedVectorOverlay(im1,V,2);
+    end
 end
 
 function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)

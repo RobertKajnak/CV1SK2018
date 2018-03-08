@@ -1,11 +1,13 @@
 %% Load all files into an array
-
+close all;
 %[toys,n] = loadAllImages('person_toy');
 [toys,n] = getAllFileNames('person_toy');
 
 %% Perfrom Stuff
 
-[H, r, c] = harris_corner_detector(char(toys(1)),10^-7,0);
+[im1, H, r, c] = harris_corner_detector(char(toys(10)),10^-7,0);
+[im2, H, r2, c2] = harris_corner_detector(char(toys(11)),10^-7,0);
+Lucas_kanade(im1,im2,15,15,c(5),r(5));
 % for i=1:n
 %     [im, H, r, c] = harris_corner_detector(char(toys(i)),10^-7,0);
 %     
