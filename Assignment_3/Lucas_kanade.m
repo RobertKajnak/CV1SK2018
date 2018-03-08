@@ -20,9 +20,19 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     %   REGIONH - OPTIONAL. the width of each region. If height speicifed, 
     %       but not width: regionW=regionH. If neither specified: value = 15
     if nargin==0
-        "Do the demo here"
+        % load files
+        sph1 = imread('sphere1.ppm');
+        sph2 = imread('sphere2.ppm');
+
+        sy1 = imread('synth1.pgm');
+        sy2 = imread('synth2.pgm');
+        % Calculate and display results
+
+        Lucas_kanade(sph1,sph2);
+        Lucas_kanade(sy1,sy2);
         return
     end
+    
     if nargin==3
         regionW = regionH;
     end
