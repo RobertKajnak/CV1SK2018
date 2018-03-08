@@ -1,17 +1,6 @@
-% %% load files
-% sph1 = imread('sphere1.ppm');
-% sph2 = imread('sphere2.ppm');
-% 
-% sy1 = imread('synth1.pgm');
-% sy2 = imread('synth2.pgm');
-% 
-% 
-% %% Calculate and display results
-% 
-% Demo_Lucas_Kanade(sph1,sph2);
-% Demo_Lucas_Kanade(sy1,sy2);
-
-%% helper functions
+%%%%
+%% To see a demo just run this script without parameters
+%%%%
 
 function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     % DEMO_LUCAS_KANADE Demonstrates the Lucas_Kanade algorithm
@@ -53,10 +42,10 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
                 x=floor(w/2)+1;
             end
             if y+floor(h/2)>=size(image1,1)
-                y=size(image1,1)-floor(h/2)-1;
+                y=size(image1,1)-floor(h/2);
             end
             if x+floor(w/2)>=size(image1,2)
-                x = size(image1,2)-floor(w/2)-1;
+                x = size(image1,2)-floor(w/2);
             end
             image1 = image1(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
             image2 = image2(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
@@ -79,15 +68,6 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     if nargin <5
         [X,Y] = speedVectorOverlay(image1,V,2);
     end
-%     else
-%         figure;
-%         imshow(im1);
-%         hold on;
-%         scatter(x,y,100,'r');
-%         quiver(x,y,V(:,:,1)*20,V(:,:,2)*20);
-%         hold off;
-%         %[X,Y] = speedVectorOverlay(im1,V,2);
-%     end
 end
 
 function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)

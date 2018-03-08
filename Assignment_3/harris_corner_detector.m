@@ -78,4 +78,5 @@ end
 % hold on;
 % scatter(c, r, 100, color);
 
+image = original_image;
 end
