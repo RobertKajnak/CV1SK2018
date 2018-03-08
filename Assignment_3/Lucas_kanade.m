@@ -35,7 +35,6 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     
     if nargin >= 6
             im1 = image1;
-            im2 = image2;
             image1 = image1(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
             image2 = image2(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
     end
@@ -51,13 +50,12 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     
     %get speeds
     [V] = getSpeeds(Ix,Iy,It);
+    
 
     %display images
     if nargin <5
         [X,Y] = speedVectorOverlay(image1,V,2);
-        else
-        figure;
-        imshow(image1);
+    else
         figure;
         imshow(im1);
         hold on;

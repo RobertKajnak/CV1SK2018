@@ -2,23 +2,29 @@
 close all;
 %[toys,n] = loadAllImages('person_toy');
 [toys,n] = getAllFileNames('person_toy');
-
+v = VideoWriter('motionTest','MPEG-4');
+open(v)
 %% Perfrom Stuff
 
-[im1, H, r, c] = harris_corner_detector(char(toys(10)),10^-7,0);
-[im2, H, r2, c2] = harris_corner_detector(char(toys(11)),10^-7,0);
-Lucas_kanade(im1,im2,15,15,c(5),r(5));
-% for i=1:n
-%     [im, H, r, c] = harris_corner_detector(char(toys(i)),10^-7,0);
-%     
-%     %im = squeeze(toys(i,:,:,:));
-%     %figure;
-%     %imshow(im,[]);
-%     %[H,r,c] = harris_corner_2(toys(i),10^-7);
-%     if (i==4)
+[imprev, H, r, c] = harris_corner_detector(char(toys(1)),10^-7,0);
+%[im2, H, r2, c2] = harris_corner_detector(char(toys(11)),10^-7,0);
+%Lucas_kanade(im1,im2,15,15,c(5),r(5));
+y=r(5);
+x=c(5);
+for i=2:n
+    [im, H, r2, c2] = harris_corner_detector(char(toys(i)),10^-7,0);
+    V = Lucas_kanade(imprev,im,15,15,x,y);
+    x=x+V(:,:,1);
+    y=y+V(:,:,2);
+    
+   
+    writeVideo(v,getframe);
+%     if (i==30)
 %         break
 %     end
-% end
+    imprev=im;
+end
+close(v);
 
 %% Helper functions
 function [filenames,n] = getAllFileNames(directory)
@@ -27,7 +33,7 @@ function [filenames,n] = getAllFileNames(directory)
     n = size(filenameList,1);
     filenames = strings(1,n-2);
     for i=3:n
-        filenames(i-2,:) = string(strcat(strcat(directory,'/'),filenameList(i).name));
+        filenames(i-2) = string(strcat(strcat(directory,'/'),filenameList(i).name));
     end
     
 end
