@@ -20,13 +20,7 @@ sIt = split_nonoverlap(It,15,15);
 
 [V] = getSpeeds(sIx,sIy,sIt);
 
-figure;
-X = 0:floor(size(sph1,1)/15)-1;
-X = X*15+7;
-Y = X;
-imshow(sph2);
-hold on;
-quiver(X,Y,V(:,:,1),V(:,:,2));
+speedVectorOverlay(sph1,V,2);
 
 %% helper functions
 function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)
@@ -115,4 +109,40 @@ function [V] = getSpeeds(ofmx,ofmy,ofmt)
             V(i,j,:)=(A'*A)^-1*A'*b;
         end
     end
+end
+
+function [X,Y] = speedVectorOverlay(image, V, displayMode)
+% SPEEDVECTOROVERLAY  Calculates the correct position for the vectors to be
+% placed on the image
+%   DISPLAYMODE - OPTIONAL. Values: 0 or omit: no display.
+%                                   1: overlays arrows on currently open
+%                                   figure
+%                                   2: Creates a figure with IMAGE and
+%                                   overays arrows on it
+%   X,Y - returns the coordinates calculated for the overlay
+
+%calculate w/h of both speed matrix and image
+vh = size(V,1);
+vw = size(V,2);
+hr = size(image,1)/vh;
+wr = size(image,2)/vw;
+
+%scale the points to be in the middle of the regions
+X = 0:vh-1;
+X = floor(X*hr+hr/2);
+Y = 0:vw-1;
+Y = floor(Y*wr+wr/2);
+
+if nargin>2
+   if displayMode == 2 
+       figure;
+       imshow(image);
+   end
+   if displayMode == 1 || displayMode == 2
+       hold on;
+       quiver(X,Y,V(:,:,1),V(:,:,2));
+       hold off;
+   end
+end
+
 end
