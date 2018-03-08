@@ -100,13 +100,19 @@ function [V] = getSpeeds(ofmx,ofmy,ofmt)
     ot = ofmt;
     V=zeros(size(ox,1),size(ox,2),2);
     
+    epsilon = 10^-2;
+    
     for i=1:size(ox,1)
         for j=1:size(ox,2)
             %reshape from [1,1,length(ox)] to [length(ox),1]
             A = [reshape(ox(i,j,:),[],1),reshape(oy(i,j,:),[],1)];
             b = -reshape(ot(i,j,:),1,[])';
             
-            V(i,j,:)=(A'*A)^-1*A'*b;
+            if all(b<epsilon)
+                V(i,j,:)= zeros(2,1);
+            else
+                V(i,j,:)=(A'*A)^-1*A'*b;
+            end
         end
     end
 end
@@ -121,28 +127,28 @@ function [X,Y] = speedVectorOverlay(image, V, displayMode)
 %                                   overays arrows on it
 %   X,Y - returns the coordinates calculated for the overlay
 
-%calculate w/h of both speed matrix and image
-vh = size(V,1);
-vw = size(V,2);
-hr = size(image,1)/vh;
-wr = size(image,2)/vw;
+    %calculate w/h of both speed matrix and image
+    vh = size(V,1);
+    vw = size(V,2);
+    hr = size(image,1)/vh;
+    wr = size(image,2)/vw;
 
-%scale the points to be in the middle of the regions
-X = 0:vh-1;
-X = floor(X*hr+hr/2);
-Y = 0:vw-1;
-Y = floor(Y*wr+wr/2);
+    %scale the points to be in the middle of the regions
+    X = 0:vh-1;
+    X = floor(X*hr+hr/2);
+    Y = 0:vw-1;
+    Y = floor(Y*wr+wr/2);
 
-if nargin>2
-   if displayMode == 2 
-       figure;
-       imshow(image);
-   end
-   if displayMode == 1 || displayMode == 2
-       hold on;
-       quiver(X,Y,V(:,:,1),V(:,:,2));
-       hold off;
-   end
-end
+    if nargin>2
+       if displayMode == 2 
+           figure;
+           imshow(image);
+       end
+       if displayMode == 1 || displayMode == 2
+           hold on;
+           quiver(X,Y,V(:,:,1),V(:,:,2));
+           hold off;
+       end
+    end
 
 end
