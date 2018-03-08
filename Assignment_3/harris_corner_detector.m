@@ -34,11 +34,11 @@ c = [];
 
 %% Find corners 
 
-for i=1+window_size:size(image, 1)-window_size
-    for j=1+window_size:size(image, 2)-window_size
-        window = H(i-window_size:i+window_size, j-window_size:j+window_size);
-        % set center value of window to zero,
-        % so it isn't included when calculating max
+% including the borders of the image
+for i=1:size(image, 1)
+    for j=1:size(image, 2)
+        window = H(max(1, i-window_size):min(size(image, 1), i+window_size), ...
+            max(1, j-window_size):min(size(image, 2), j+window_size));
         window(window_size+1, window_size+1) = 0.0;
         if H(i,j) > max(window(:)) && H(i,j) > threshold
             r = [r, i];
@@ -46,6 +46,18 @@ for i=1+window_size:size(image, 1)-window_size
         end
     end
 end
+% for i=1+window_size:size(image, 1)-window_size
+%     for j=1+window_size:size(image, 2)-window_size
+%         window = H(i-window_size:i+window_size, j-window_size:j+window_size);
+%         % set center value of window to zero,
+%         % so it isn't included when calculating max
+%         window(window_size+1, window_size+1) = 0.0;
+%         if H(i,j) > max(window(:)) && H(i,j) > threshold
+%             r = [r, i];
+%             c = [c, j];
+%         end
+%     end
+% end
 
 %% plot figures
 % since Ix and Iy are grayscale images, they are scaled between their min
@@ -57,11 +69,11 @@ elseif contains(image_path, 'person_toy')
 else
     color = 'k';
 end
-figure(1);
+figure();
 imshow(Ix, [min(Ix(:)), max(Ix(:))]);
-figure(2);
+figure();
 imshow(Iy, [min(Iy(:)), max(Iy(:))]);
-figure(3);
+figure();
 imshow(original_image);
 hold on;
 scatter(c, r, 100, color);
