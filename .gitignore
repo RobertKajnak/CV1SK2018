@@ -3,5 +3,6 @@
 *.jl.mem
 *.asv
 *.pdf
+*.mp4
 deps/deps.jl
 **/photometric/
