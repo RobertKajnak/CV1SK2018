@@ -1,14 +1,17 @@
-function [H, r, c]  = harris_corner_detector(image_path, threshold, rotation)
+function [image, H, r, c]  = harris_corner_detector(image_path, threshold, rotation)
 
 % convert to grayscale
 original_image = imread(image_path);
-
-% (rotate if needed)
+image = rgb2gray(im2double(original_image));
+%(rotate if needed)
 if rotation
     angle = rand * 360;
     original_image = imrotate(original_image,angle);
+    % Set area around border to NaN
+    Mrot = ~imrotate(true(size(image)),angle);
+    image = rgb2gray(im2double(original_image));
+    image(Mrot&~imclearborder(Mrot)) = NaN;
 end
-image = rgb2gray(im2double(original_image));
 window_size = 5;
 
 % Calculate Ix and Iy
@@ -54,7 +57,9 @@ for i=1+window_size:size(image, 1)-window_size
     end
 end
 
-% plot figures
+%% plot figures
+% since Ix and Iy are grayscale images, they are scaled between their min
+% and max
 figure(1);
 imshow(Ix, [min(Ix(:)), max(Ix(:))]);
 figure(2);
@@ -62,5 +67,12 @@ imshow(Iy, [min(Iy(:)), max(Iy(:))]);
 figure(3);
 imshow(original_image);
 hold on;
-scatter(c, r);
+if contains(image_path, 'pingpong')
+    scatter(c, r, 100, 'b');
+elseif contains(image_path, 'person_toy')
+    scatter(c, r, 100, 'r');
+else
+    scatter(c, r, 100, 'k');
+end
+
 end
