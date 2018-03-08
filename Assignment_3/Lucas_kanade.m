@@ -1,19 +1,19 @@
-%% load files
-sph1 = imread('sphere1.ppm');
-sph2 = imread('sphere2.ppm');
-
-sy1 = imread('synth1.pgm');
-sy2 = imread('synth2.pgm');
-
-
-%% Calculate and display results
-
-Demo_Lucas_Kanade(sph1,sph2);
-Demo_Lucas_Kanade(sy1,sy2);
+% %% load files
+% sph1 = imread('sphere1.ppm');
+% sph2 = imread('sphere2.ppm');
+% 
+% sy1 = imread('synth1.pgm');
+% sy2 = imread('synth2.pgm');
+% 
+% 
+% %% Calculate and display results
+% 
+% Demo_Lucas_Kanade(sph1,sph2);
+% Demo_Lucas_Kanade(sy1,sy2);
 
 %% helper functions
 
-function [V,X,Y] = Demo_Lucas_Kanade(image1,image2,regionH,regionW)
+function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW)
     % DEMO_LUCAS_KANADE Demonstrates the Lucas_Kanade algorithm
     % implementation
     %   REGIONH - OPTIONAL. the heigth of each region. Default value = 15
