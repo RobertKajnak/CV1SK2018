@@ -1,19 +1,15 @@
 %% Load all files into an array
 
-[toys,n] = loadAllImages('person_toy');
-%[toys,n] = getAllFileNames('person_toy');
+%[toys,n] = loadAllImages('person_toy');
+[toys,n] = getAllFileNames('person_toy');
 
 %% Perfrom Stuff
 for i=1:n
-    %We need the image for both Harris and Kanade, we should only load it
-    %once
+    [im, H, r, c] = harris_corner_detector(char(toys(i)),10^-7,0);
     
-    %having extra ':' for grayscale doesn't cause exceptions
-    %toys(i)
-    %harris_corner_detector(toys(i),10^-7,0);
-    im = squeeze(toys(i,:,:,:));
-    figure;
-    imshow(im,[]);
+    %im = squeeze(toys(i,:,:,:));
+    %figure;
+    %imshow(im,[]);
     %[H,r,c] = harris_corner_2(toys(i),10^-7);
     if (i==4)
         break
@@ -25,7 +21,7 @@ function [filenames,n] = getAllFileNames(directory)
     
     filenameList = dir(directory);
     n = size(filenameList,1);
-    filenames = zeros(1,n-2);
+    filenames = strings(1,n-2);
     for i=3:n
         filenames(i-2,:) = string(strcat(strcat(directory,'/'),filenameList(i).name));
     end
