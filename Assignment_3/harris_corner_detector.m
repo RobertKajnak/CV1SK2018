@@ -1,4 +1,4 @@
-function [image, H, r, c]  = harris_corner_detector(image_path, threshold, rotation)
+function [H, r, c]  = harris_corner_detector(image_path, threshold, rotation)
 
 % convert to grayscale
 original_image = imread(image_path);

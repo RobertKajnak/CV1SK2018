@@ -4,17 +4,19 @@
 [toys,n] = getAllFileNames('person_toy');
 
 %% Perfrom Stuff
-for i=1:n
-    [im, H, r, c] = harris_corner_detector(char(toys(i)),10^-7,0);
-    
-    %im = squeeze(toys(i,:,:,:));
-    %figure;
-    %imshow(im,[]);
-    %[H,r,c] = harris_corner_2(toys(i),10^-7);
-    if (i==4)
-        break
-    end
-end
+
+[H, r, c] = harris_corner_detector(char(toys(1)),10^-7,0);
+% for i=1:n
+%     [im, H, r, c] = harris_corner_detector(char(toys(i)),10^-7,0);
+%     
+%     %im = squeeze(toys(i,:,:,:));
+%     %figure;
+%     %imshow(im,[]);
+%     %[H,r,c] = harris_corner_2(toys(i),10^-7);
+%     if (i==4)
+%         break
+%     end
+% end
 
 %% Helper functions
 function [filenames,n] = getAllFileNames(directory)
