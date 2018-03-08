@@ -62,20 +62,20 @@ end
 %% plot figures
 % since Ix and Iy are grayscale images, they are scaled between their min
 % and max
-if contains(image_path, 'pingpong')
-    color = 'b';
-elseif contains(image_path, 'person_toy')
-    color = 'r';
-else
-    color = 'k';
-end
-figure();
-imshow(Ix, [min(Ix(:)), max(Ix(:))]);
-figure();
-imshow(Iy, [min(Iy(:)), max(Iy(:))]);
-figure();
-imshow(original_image);
-hold on;
-scatter(c, r, 100, color);
+% if contains(image_path, 'pingpong')
+%     color = 'b';
+% elseif contains(image_path, 'person_toy')
+%     color = 'r';
+% else
+%     color = 'k';
+% end
+% figure();
+% imshow(Ix, [min(Ix(:)), max(Ix(:))]);
+% figure();
+% imshow(Iy, [min(Iy(:)), max(Iy(:))]);
+% figure();
+% imshow(original_image);
+% hold on;
+% scatter(c, r, 100, color);
 
 end
