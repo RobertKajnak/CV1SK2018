@@ -2,7 +2,8 @@ function [H,r,c] = harris_corner_2(image, threshold)
 %HARRIS_CORNER_2 Summary of this function goes here
 %   Detailed explanation goes here
 
-image = rgb2gray(image);
+if (size(image,3)==3)
+    image = rgb2gray(image);
 image = im2double(image);
 
 wd = 5;
