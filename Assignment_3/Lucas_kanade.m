@@ -1,7 +1,3 @@
-%% These will be needed later
-
-
-
 %% load files
 sph1 = imread('sphere1.ppm');
 sph2 = imread('sphere2.ppm');
@@ -10,19 +6,43 @@ sy1 = imread('synth1.pgm');
 sy2 = imread('synth2.pgm');
 
 
-%%
-[Ix,Iy,It] = getDerivatives(sph1,sph2);
+%% Calculate and display results
 
-%split optical vectors
-sIx = split_nonoverlap(Ix,15,15);
-sIy = split_nonoverlap(Iy,15,15);
-sIt = split_nonoverlap(It,15,15);
-
-[V] = getSpeeds(sIx,sIy,sIt);
-
-speedVectorOverlay(sph1,V,2);
+Demo_Lucas_Kanade(sph1,sph2);
+Demo_Lucas_Kanade(sy1,sy2);
 
 %% helper functions
+
+function [V,X,Y] = Demo_Lucas_Kanade(image1,image2,regionH,regionW)
+    % DEMO_LUCAS_KANADE Demonstrates the Lucas_Kanade algorithm
+    % implementation
+    %   REGIONH - OPTIONAL. the heigth of each region. Default value = 15
+    %   REGIONH - OPTIONAL. the width of each region. If height speicifed, 
+    %       but not width: regionW=regionH. If neither specified: value = 15
+    if nargin==3
+        regionW = regionH;
+    end
+    if nargin==2
+        regionH = 15;
+        regionW = 15;
+    end
+   
+    [Ix,Iy,It] = getDerivatives(image1,image2);
+    h=regionH;
+    w=regionW;
+    
+    %split optical vectors
+    sIx = split_nonoverlap(Ix,h,w);
+    sIy = split_nonoverlap(Iy,h,w);
+    sIt = split_nonoverlap(It,h,w);
+
+    %get speeds
+    [V] = getSpeeds(sIx,sIy,sIt);
+
+    %display images
+    [X,Y] = speedVectorOverlay(image1,V,2);
+end
+
 function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)
 % GETDERIVATIVES  Calculates the spacial derivatives for image 1 and the
 % temporal derivative of the two images.
@@ -37,8 +57,14 @@ function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)
     [gdx, gdy] = gradient(g);
 
     % convert images to grayscale(double)
-    i1 = rgb2gray(im2double(image1));
-    i2 = rgb2gray(im2double(image2));
+    i1 = im2double(image1);
+    i2 = im2double(image2);
+    if (size(image1,3) == 3)
+        i1=rgb2gray(i1);
+    end
+    if (size(image2,3) == 3)
+        i2=rgb2gray(i2);
+    end
     
     % perform Gaussian first derivative
     Ix = conv2(i1, gdx, 'same');
