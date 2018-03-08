@@ -45,6 +45,19 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     
     if nargin >= 6
             im1 = image1;
+            %Can't just use min, that would change the window size
+            if (y-floor(h/2)<1)
+                y=floor(h/2)+1;
+            end
+            if (x-floor(w/2)<1)
+                x=floor(w/2)+1;
+            end
+            if y+floor(h/2)>=size(image1,1)
+                y=size(image1,1)-floor(h/2)-1;
+            end
+            if x+floor(w/2)>=size(image1,2)
+                x = size(image1,2)-floor(w/2)-1;
+            end
             image1 = image1(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
             image2 = image2(y-floor(h/2):y+floor(h/2),x-floor(w/2):x+floor(w/2));
     end
@@ -65,15 +78,16 @@ function [V,X,Y] = Lucas_kanade(image1,image2,regionH,regionW,x,y)
     %display images
     if nargin <5
         [X,Y] = speedVectorOverlay(image1,V,2);
-    else
-        figure;
-        imshow(im1);
-        hold on;
-        scatter(x,y,100,'r');
-        quiver(x,y,V(:,:,1)*20,V(:,:,2)*20);
-        hold off;
-        %[X,Y] = speedVectorOverlay(im1,V,2);
     end
+%     else
+%         figure;
+%         imshow(im1);
+%         hold on;
+%         scatter(x,y,100,'r');
+%         quiver(x,y,V(:,:,1)*20,V(:,:,2)*20);
+%         hold off;
+%         %[X,Y] = speedVectorOverlay(im1,V,2);
+%     end
 end
 
 function [Ix,Iy,It] = getDerivatives(image1, image2, isDoPlot)

@@ -2,8 +2,8 @@
 close all;
 %[toys,n] = loadAllImages('person_toy');
 [toys,n] = getAllFileNames('person_toy');
-v = VideoWriter('motionTest','MPEG-4');
-open(v)
+vid = VideoWriter('motionTest','MPEG-4');
+open(vid)
 %% Perfrom Stuff
 
 [imprev, H, r, c] = harris_corner_detector(char(toys(1)),10^-7,0);
@@ -11,20 +11,34 @@ open(v)
 %Lucas_kanade(im1,im2,15,15,c(5),r(5));
 y=r(5);
 x=c(5);
+
 for i=2:n
     [im, H, r2, c2] = harris_corner_detector(char(toys(i)),10^-7,0);
-    V = Lucas_kanade(imprev,im,15,15,x,y);
-    x=x+V(:,:,1);
-    y=y+V(:,:,2);
+    rold = r;
+    cold = c;
+    V = zeros(length(r),2);
+    for j = 1:length(r)
+        v = Lucas_kanade(imprev,im,15,15,c(j),r(j));
+        v = squeeze(v);
+        c(j)=c(j)+v(1);
+        r(j)=r(j)+v(2);
+        V(j,:)=v;
+    end
+    figure;
+    imshow(im);
+    hold on;
+    quiver(c',r',V(:,1),V(:,2));
+    hold off;
     
-   
-    writeVideo(v,getframe);
+    writeVideo(vid,getframe);
 %     if (i==30)
 %         break
 %     end
     imprev=im;
 end
-close(v);
+close(vid);
+%'cause there'll be like 101 windows open
+close all;
 
 %% Helper functions
 function [filenames,n] = getAllFileNames(directory)
@@ -35,7 +49,8 @@ function [filenames,n] = getAllFileNames(directory)
     for i=3:n
         filenames(i-2) = string(strcat(strcat(directory,'/'),filenameList(i).name));
     end
-    
+    %removing . and ..
+    n=n-2;
 end
 
 function [images,n] = loadAllImages(directory)
