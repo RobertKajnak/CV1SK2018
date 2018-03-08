@@ -15,7 +15,7 @@ for i=2:n
     cold = c;
     V = zeros(length(r),2);
     for j = 1:length(r)
-        v = Lucas_kanade(imprev,im,15,15,c(j),r(j));
+        v = Lucas_kanade(imprev,im,40,40,c(j),r(j));
         v = squeeze(v);
         c(j)=c(j)+v(1);
         r(j)=r(j)+v(2);
@@ -28,9 +28,6 @@ for i=2:n
     hold off;
     
     writeVideo(vid,getframe);
-%     if (i==30)
-%         break
-%     end
     imprev=im;
 end
 close(vid);
