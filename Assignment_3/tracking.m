@@ -1,6 +1,6 @@
 %% Load all files into an array
 close all;
-[toys,n] = getAllFileNames('person_toy');
+[toys,n] = getAllFileNames('pingpong');
 vid = VideoWriter('motionTest','MPEG-4');
 open(vid)
 %% Perfrom Stuff
