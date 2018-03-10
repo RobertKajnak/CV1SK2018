@@ -11,6 +11,8 @@ function demo()
     [f1,d1] = getFeatures(boat1);
     [f2,d2] = getFeatures(boat2);
 
+    %done 50 as requested, but looks much better with a lower number such
+    %as 10
     getMatches(boat1,boat2,1,50);
 
     [matches, scores] = vl_ubcmatch(d1, d2) ;
@@ -72,19 +74,37 @@ function [matches, scores] = getMatches(im1,im2,isOrdered,nrmatches)
     
     if nargin>=4 && nrmatches>0
         figure;
-        subplot(1,2,1);
-        imshow(im1);
-        hold on;
-        h2 = vl_plotframe(f1(:,matches(1,1:nrmatches))) ;
+        stiched = cat(2,im1,im2);
+        w = size(im1,2);
+        imshow(stiched);
+        sel1 = matches(1,1:nrmatches);
+        sel2 = matches(2,1:nrmatches);
+        h1 = vl_plotframe(f1(:,sel1)) ;
+        set(h1,'color','y','linewidth',3) ;
+        h2 = vl_plotframe([f2(1,sel2)+w;f2(2:4,sel2)]) ;
         set(h2,'color','y','linewidth',3) ;
-        hold off;
-
-        subplot(1,2,2);
-        imshow(im2);
-        hold on;
-        h2 = vl_plotframe(f2(:,matches(2,1:nrmatches))) ;
-        set(h2,'color','y','linewidth',3) ;
-        hold off;
+        hold on
+        for i=1:nrmatches
+            x1 = f1(1,matches(1,i));
+            x2 = f2(1,matches(2,i))+w;
+            y1 = f1(2,matches(1,i));
+            y2 = f2(2,matches(2,i));
+            plot([x1 x2],[y1 y2],'blue');
+        end
+%         figure;
+%         subplot(1,2,1);
+%         imshow(im1);
+%         hold on;
+%         h2 = vl_plotframe(f1(:,matches(1,1:nrmatches))) ;
+%         set(h2,'color','y','linewidth',3) ;
+%         hold off;
+% 
+%         subplot(1,2,2);
+%         imshow(im2);
+%         hold on;
+%         h2 = vl_plotframe(f2(:,matches(2,1:nrmatches))) ;
+%         set(h2,'color','y','linewidth',3) ;
+%         hold off;
     end
 end
 
