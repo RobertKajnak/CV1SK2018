@@ -46,12 +46,8 @@
             xy3 = m*[x;y]+t;
             
             %check if transofmation of points by counting inliers
-
             if sqrt((xy3(1)-x2)^2-(xy3(2)-y2)^2)<10
                 good = good +1;
-                %save the parameters
-                m3 = m;
-                t3 = t;
                 %save the inliers
                 ftemp(:,k) = xy3;
                 k=k+1;
@@ -59,7 +55,10 @@
         end
         
         if good>best
-            fbest = ftemp(1:good);
+            fbest = ftemp(:,1:good);
+            %save the parameters
+            m3 = m;
+            t3 = t;
             best = good;
         end
     end    
@@ -72,9 +71,9 @@
     
     im3 = transform_image(boat1,m3,t3);
     figure;
-    subplot(2,1,1);
+    subplot(1,2,1);
     imshow(boat1);
-    subplot(2,1,2);
+    subplot(1,2,2);
     imshow(im3);
 %     tform = affine2d([m3(1) m3(2) t3(1);  m3(3) m3(4) t3(2); 0 0 1]);
 %     im3 = imwarp(boat1,tform);
@@ -83,17 +82,20 @@
 %% helper functions
 function new_image=transform_image(image,m,t)
     sz = size(image);
-    new_image=zeros();
+    new_image=zeros(sz);
     for i=1:sz(1)
         for j=1:sz(2)
-            xy= [m(1) m(2);m(3) m(4)]*[i;j]+[t(1);t(2)];
+            xy= m*[i;j]+t;
             xy=floor(xy);
             if xy(1)>0 && xy(1)<sz(1) && xy(2)>0 && xy(2)<sz(2)
                 new_image(xy(1),xy(2))=image(i,j);
+               %[xy,[i;j]]
+               %new_image(i,j)=image(xy(1),xy(2));
             end
         end
     end
 end
+
 function [matches, scores, f1, f2] = getMatches(im1,im2,isOrdered,nrmatches)
 %NRMATCHES - optional. If a positive value is specified, that number of
 %mathces will be plotted
