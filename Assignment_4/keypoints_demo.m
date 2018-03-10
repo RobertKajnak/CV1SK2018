@@ -1,4 +1,4 @@
-function keypoints_demo()
+
     boat1 = imread('boat1.pgm');
     boat2 = imread('boat2.pgm');
     % 
@@ -8,29 +8,93 @@ function keypoints_demo()
     %%
     close all;
 
-    [f1,d1] = getFeatures(boat1);
-    [f2,d2] = getFeatures(boat2);
-
     %done 50 as requested, but looks much better with a lower number such
     %as 10
-    getMatches(boat1,boat2,1,50);
+    %[matches, ~, f1,f2] = getMatches(boat1,boat2,1,50);
+    [matches, ~, f1,f2] = getMatches(boat1,boat2);
 
-    [matches, scores] = vl_ubcmatch(d1, d2) ;
+    n=10;
+    p=50;
 
-    n=30;
-    p=10;
-
+    fbest = zeros(size(matches,2));
+    best = 0;
     for i=1:n
+        %select p random points
         perm = randperm(size(matches,2),p);
+        x1 = f1(1,matches(1,perm(1)));
+        x2 = f2(1,matches(2,perm(1)));
+        y1 = f1(2,matches(1,perm(1)));
+        y2 = f2(2,matches(2,perm(1)));
+        
+        %TODO this should be based on all 50, right?
+        A = [[x1 y1 0 0;0 0 x1 y1],eye(2)];
+        b = [x2;y2];
+        x = pinv(A)*b;
+        
+        m = reshape(x(1:4),2,2);
+        t = x(5:6);
+        
+        f3 = f2;
+        ftemp = zeros(size(matches));
+        good = 0;
+        k=1;
+        for j=1:size(matches,2)
+            x =  f1(1,matches(1,j));
+            y =  f1(2,matches(1,j));
+            x2 = f2(1,matches(2,j));
+            y2 = f2(2,matches(2,j));
+            xy3 = m*[x;y]+t;
+            
+            %check if transofmation of points by counting inliers
 
+            if sqrt((xy3(1)-x2)^2-(xy3(2)-y2)^2)<10
+                good = good +1;
+                %save the parameters
+                m3 = m;
+                t3 = t;
+                %save the inliers
+                ftemp(:,k) = xy3;
+                k=k+1;
+            end
+        end
+        
+        if good>best
+            fbest = ftemp(1:good);
+            best = good;
+        end
     end    
-end
-
+    fprintf('The image was rotated with %.2f%% precision\n',best*100.0/size(matches,2));
+    
+    
+    %TODO implement transform
+    %compare it to maketform
+    %"imtransform is not recommended. Use imwarp instead."
+    
+    im3 = transform_image(boat1,m3,t3);
+    figure;
+    subplot(2,1,1);
+    imshow(boat1);
+    subplot(2,1,2);
+    imshow(im3);
+%     tform = affine2d([m3(1) m3(2) t3(1);  m3(3) m3(4) t3(2); 0 0 1]);
+%     im3 = imwarp(boat1,tform);
+%     imshow(boat1), figure, imshow(im3)
 
 %% helper functions
-
-
-function [matches, scores] = getMatches(im1,im2,isOrdered,nrmatches)
+function new_image=transform_image(image,m,t)
+    sz = size(image);
+    new_image=zeros();
+    for i=1:sz(1)
+        for j=1:sz(2)
+            xy= [m(1) m(2);m(3) m(4)]*[i;j]+[t(1);t(2)];
+            xy=floor(xy);
+            if xy(1)>0 && xy(1)<sz(1) && xy(2)>0 && xy(2)<sz(2)
+                new_image(xy(1),xy(2))=image(i,j);
+            end
+        end
+    end
+end
+function [matches, scores, f1, f2] = getMatches(im1,im2,isOrdered,nrmatches)
 %NRMATCHES - optional. If a positive value is specified, that number of
 %mathces will be plotted
 %ISORDERED - optional. Defines if the returned matches are ordered or
