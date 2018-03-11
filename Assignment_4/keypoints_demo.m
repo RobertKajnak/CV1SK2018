@@ -81,16 +81,17 @@
 
 %% helper functions
 function new_image=transform_image(image,m,t)
+    image = double(image)/255.0;
     sz = size(image);
-    new_image=zeros(sz);
+    new_image=uint8(zeros(sz));
     for i=1:sz(1)
         for j=1:sz(2)
-            xy= m*[i;j]+t;
+            xy=m*[i;j];%m*[i;j]+t;
             xy=floor(xy);
             if xy(1)>0 && xy(1)<sz(1) && xy(2)>0 && xy(2)<sz(2)
-                new_image(xy(1),xy(2))=image(i,j);
+               %new_image(xy(1),xy(2))=uint8(255.0*image(i,j));
                %[xy,[i;j]]
-               %new_image(i,j)=image(xy(1),xy(2));
+               new_image(i,j)=uint8(255.0*image(xy(1),xy(2)));
             end
         end
     end
