@@ -69,32 +69,37 @@
     %compare it to maketform
     %"imtransform is not recommended. Use imwarp instead."
     
-    im3 = transform_image(boat1,m3,t3);
+    [im3,nc] = transform_image(boat2,m3,t3);
     figure;
     subplot(1,2,1);
     imshow(boat1);
     subplot(1,2,2);
     imshow(im3);
-%     tform = affine2d([m3(1) m3(2) t3(1);  m3(3) m3(4) t3(2); 0 0 1]);
-%     im3 = imwarp(boat1,tform);
+%     tform = projective2d([m3(1) m3(3) t3(1);  m3(2) m3(4) t3(2); 0 0 1]);
+%     im3 = imwarp(boat2,tform);
 %     imshow(boat1), figure, imshow(im3)
 
 %% helper functions
-function new_image=transform_image(image,m,t)
+function [new_image,nc]=transform_image(image,m,t)
+    %nc is for debugging -- it contains the transformed coordinates of the
+    %image's corners
     image = double(image)/255.0;
     sz = size(image);
+    nc = [m*[1;1]+t,m*[sz(1);1]+t,m*[1;sz(2)]+t,m*[sz(1);sz(2)]];
     new_image=uint8(zeros(sz));
     for i=1:sz(1)
         for j=1:sz(2)
-            xy=m*[i;j];%m*[i;j]+t;
-            xy=floor(xy);
+            xy=m*[i;j]+t;
+            xy=round(xy);
             if xy(1)>0 && xy(1)<sz(1) && xy(2)>0 && xy(2)<sz(2)
                %new_image(xy(1),xy(2))=uint8(255.0*image(i,j));
                %[xy,[i;j]]
                new_image(i,j)=uint8(255.0*image(xy(1),xy(2)));
             end
+            %new_image(i,j)=uint8(255.0*image(i,j));
         end
     end
+    
 end
 
 function [matches, scores, f1, f2] = getMatches(im1,im2,isOrdered,nrmatches)
