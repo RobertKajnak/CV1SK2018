@@ -9,10 +9,10 @@ function [scores, matches,f1,f2,d1,d2]= keypoint_matching(image1,image2)
     
     function [converted_image] = tosingle(image)
 
-    if size(image,3)==3
-        converted_image = single(rgb2gray(image));
-    elseif isa(image(1,1),'uint8')
-        converted_image = single(image);
+        if size(image,3)==3
+            converted_image = single(rgb2gray(image));
+        elseif isa(image(1,1),'uint8')
+            converted_image = single(image);
+        end
     end
-end
 end

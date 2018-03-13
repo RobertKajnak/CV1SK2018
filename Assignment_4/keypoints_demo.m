@@ -2,7 +2,7 @@
 boat1 = imread('boat1.pgm');
 boat2 = imread('boat2.pgm');
  
-[scores, matches,f1,f2,d1,d2] = keypoint_matching2(boat1, boat2);
+[scores, matches,f1,f2,d1,d2] = keypoint_matching(boat1, boat2);
 matches_subset = datasample(matches,50, 2, 'Replace', false);
  
 % Plot matches
@@ -22,6 +22,6 @@ hold off;
 [best_transform] = RANSAC(boat1, boat2, matches, f1, f2, 10, 50, false);
 
 %% Other way around
-[scores, matches,f1,f2,d1,d2] = keypoint_matching2(boat2, boat1);
+[scores, matches,f1,f2,d1,d2] = keypoint_matching(boat2, boat1);
 [best_transform2] = RANSAC(boat2, boat1, matches, f1, f2, 10, 50, false);
 
