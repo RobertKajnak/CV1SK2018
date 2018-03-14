@@ -95,13 +95,13 @@ end
 
 % helper function to transform image
 function [new_image,nc]=transform_image(image,m,t)
-    %nc is for debugging -- it contains the transformed coordinates of the
-    %image's corners
+    % M - rotation matrix
+    % T - translation matrix
+    % NC - Coordinate of new image's corners
     
     image = double(image);
     sz = size(image);
         
-    %nc = floor([m*[1;1]+t,m*[sz(1);1]+t,m*[1;sz(2)]+t,m*[sz(1);sz(2)]+t]);
     mi = m^-1;
     function [xy]=cinv(x,y)
         xy = mi*([x;y]-t);
@@ -113,20 +113,16 @@ function [new_image,nc]=transform_image(image,m,t)
     miny = min(nc(2,:));
     maxy = max(nc(2,:));
     nsz = [maxy-miny,maxx-minx];
-    offsetX = -minx;
-    offsetY = -miny;
-    %nsz = sz;
-    % TODO correct padding
+    offset = [-minx;-miny];
+    
     new_image=uint8(zeros(nsz));
     for i=1:nsz(1)
         for j=1:nsz(2)
             xy=m*[i;j]+t;
-            xy=round(xy)+[offsetX;offsetY];
+            xy=round(xy)+offset;
             if xy(1)>0 && xy(1)<sz(1) && xy(2)>0 && xy(2)<sz(2)
-               %new_image(xy(1)+offsetX,xy(2)+offsetY)=uint8(image(i,j));
                new_image(i, j)=uint8(image(xy(1),xy(2)));
             end
-            %new_image(i,j)=uint8(255.0*image(i,j));
         end
     end
 end
