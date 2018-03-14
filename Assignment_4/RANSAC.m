@@ -1,4 +1,11 @@
-function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show_image)
+function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show_image,show_all_matching_points)
+    if nargin<8
+        show_image=false;
+    end
+    if nargin<9
+        show_all_matching_points = false;
+    end
+
     best_num_inliers = -inf;
     best_inliers = [];
     best_m = [];
@@ -24,7 +31,7 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
         t = [x(5);x(6)];
         % Transform, plot & count inliers
         inliers = [];
-        if show_image
+        if show_all_matching_points
             figure();
             imshow(cat(2, image1, image2));
             hold on;
@@ -35,7 +42,7 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
             transformed = m*[x1;y1]+t;
             x_trans = transformed(1);
             y_trans = transformed(2);
-            if show_image
+            if show_all_matching_points
                 line([x1; x_trans + size(image1, 2)], [y1;y_trans], 'Color', 'r', 'LineWidth', 1);
             end
             x2 = f2(1,matches(2,j)) ;
@@ -44,7 +51,7 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
                 inliers = [inliers [x_trans; y_trans]];
             end
         end
-        if show_image
+        if show_all_matching_points
             hold off;
         end
         % Get best transformation parameters
@@ -58,24 +65,29 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
         % close figure after displaying
          
     end
+    
     fprintf('The image was rotated with %.2f%% precision\n',best_num_inliers*100.0/size(matches,2));
     % transform image and show next to transformation with matlab
     [new_image, nc] = transform_image(image1, best_m, best_t);
-    % matlab recommends: use affine2d instead of maketform and
-    % imwarp instead of imtransform
-    tform = affine2d([best_m'; best_t']);
-    matlab_transformed = imwarp(image1, tform, 'OutputView', imref2d(size(image1)));
-    figure();
-    new_image = imresize(new_image,0.6);
-    imshow(new_image);
-    figure();
-    matlab_transformed = imresize(matlab_transformed,0.6);
-    imshow(matlab_transformed);
-    figure()
-    image2 = imresize(image2, 0.6);
-    imshow(image2);
+    if show_image
+        % matlab recommends: use affine2d instead of maketform and
+        % imwarp instead of imtransform
+        tform = affine2d([best_m'; best_t']);
+        matlab_transformed = imwarp(image1, tform, 'OutputView', imref2d(size(image1)));
+        figure();
+        new_image = imresize(new_image,0.6);
+        imshow(new_image);
+        figure();
+        matlab_transformed = imresize(matlab_transformed,0.6);
+        imshow(matlab_transformed);
+        figure()
+        image2 = imresize(image2, 0.6);
+        imshow(image2);
+    end
     
-    best_transformation = nc;%= [best_m best_t];
+    best_transformation.m = best_m; 
+    best_transformation.t = best_t;
+    best_transformation.c = nc;
 end
 
 % helper function to transform image
