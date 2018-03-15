@@ -1,4 +1,4 @@
-function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show_image,show_all_matching_points)
+function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, f2, N, P, show_image,show_all_matching_points)
 % SHOW_IMAGE - 0 no image;1 own image; 2 own and matlab image
     if nargin<8
         show_image=false;
@@ -49,7 +49,7 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
             x2 = f2(1,matches(2,j)) ;
             y2 = f2(2,matches(2,j)) ;
             if abs(x2-x_trans) < 10 && abs(y2-y_trans) < 10
-                inliers = [inliers [x_trans; y_trans]];
+                inliers = [inliers [matches(1,j); matches(2,j)]];
             end
         end
         if show_all_matching_points
@@ -67,6 +67,24 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
          
     end
     
+    A = [];
+    b = [];
+   for i = 1:best_num_inliers
+        x1 = f1(1,best_inliers(1,i)) ;
+        x2 = f2(1,best_inliers(2,i)) ;
+        y1 = f1(2,best_inliers(1,i)) ;
+        y2 = f2(2,best_inliers(2,i)) ;
+        A_i = [x1 y1 0 0 1 0; 0 0 x1 y1 0 1];
+        b_i = [x2;y2];
+        A = [A; A_i];
+        b = [b; b_i];
+    end
+    
+     x = pinv(A)*b;
+     best_m = [x(1) x(2); x(3) x(4)];
+     best_t = [x(5);x(6)];
+        
+    
     fprintf('The image was rotated with %.2f%% precision\n',best_num_inliers*100.0/size(matches,2));
     % transform image and show next to transformation with matlab
     [new_image, nc] = transform_image(image1, best_m, best_t);
@@ -74,16 +92,16 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
         % matlab recommends: use affine2d instead of maketform and
         % imwarp instead of imtransform
         tform = affine2d([best_m'; best_t']);
-        matlab_transformed = imwarp(image1, tform, 'OutputView', imref2d(size(image1)));
+        matlab_transformed = imwarp(image1, tform);%, 'OutputView', imref2d(size(image1)));
         figure();
-        new_image = imresize(new_image,0.6);
+        %new_image = imresize(new_image,0.6);
         imshow(new_image);
         if show_image==2
             figure();
-            matlab_transformed = imresize(matlab_transformed,0.6);
+            %matlab_transformed = imresize(matlab_transformed,0.6);
             imshow(matlab_transformed);
             figure()
-            image2 = imresize(image2, 0.6);
+            %image2 = imresize(image2, 0.6);
             imshow(image2);
         end
     end
@@ -92,4 +110,3 @@ function [best_transformation]= RANSAC(image1,image2,matches, f1, f2, N, P, show
     best_transformation.t = best_t;
     best_transformation.c = nc;
 end
-
