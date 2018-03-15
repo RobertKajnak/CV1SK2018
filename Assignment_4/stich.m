@@ -10,7 +10,7 @@ boat2 = imread('boat2.pgm');
 %W,H
 %the first image is assumed to be in perfect landscape
 offset=floor(bt.m*[1;1]+bt.t);
-base = boat2;
+base = boat2;z
 rotated = transform_image(base,bt.m,bt.t);
 
 %calculate the new size for the image
