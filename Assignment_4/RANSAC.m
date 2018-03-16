@@ -87,15 +87,14 @@ function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, 
     
     fprintf('The image was rotated with %.2f%% precision\n',best_num_inliers*100.0/size(matches,2));
     % transform image and show next to transformation with matlab
-    [new_image, nc] = transform_image(image1, best_m, best_t);
     if show_image
-        % matlab recommends: use affine2d instead of maketform and
-        % imwarp instead of imtransform
-        tform = affine2d([best_m'; best_t']);
-        matlab_transformed = imwarp(image1, tform);%, 'OutputView', imref2d(size(image1)));
-        
+        new_image = transform_image(image1, best_m, best_t);
         imshow(new_image);
         if show_image==2
+            % matlab recommends: use affine2d instead of maketform and
+            % imwarp instead of imtransform
+            tform = affine2d([best_m'; best_t']);
+            matlab_transformed = imwarp(image1, tform);%, 'OutputView', imref2d(size(image1)));
             figure('name','Transformation done using matlab');
             %matlab_transformed = imresize(matlab_transformed,0.6);
             imshow(matlab_transformed);
@@ -106,5 +105,4 @@ function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, 
     
     best_transformation.m = best_m; 
     best_transformation.t = best_t;
-    best_transformation.c = nc;
 end
