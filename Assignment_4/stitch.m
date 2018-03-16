@@ -4,7 +4,7 @@ image2 = imread(im2_str);
 
 [scores, matches,f1,f2,d1,d2] = keypoint_matching(image2, image1);
 
-[bt] = RANSAC(image2, image1, matches, f1, f2, 20, 3, 1, false);
+[bt] = RANSAC(image2, image1, matches, f1, f2, 20, 3);
 
 %W,H
 w = size(image2, 2);
@@ -23,7 +23,7 @@ nsz = [nsz(1),nsz(2), size(image1,3)];
 
 %overlay the two images
 im = zeros(nsz);
-figure;
+%figure;
 im=overlay(im,image1,-offset.*(offset<0));
 im=overlay(im,rotated,offset.*(offset>0));
 
@@ -34,11 +34,10 @@ offset_rotated(2) = max(offset(2), 0);
 im = overlay(im, image1, offset_image1);
 im = overlay(im, rotated, offset_rotated);
 im = uint8(im);
-imshow(im);
+%imshow(im);
 end
 
-%TODO If you know a matlab function for this one, feel free to replace it. 
-%The one I found was kinda complicated
+
 function [new_image]=overlay(image1,image2,offset)
     new_image = image1;
     for i=1:size(image2,1)

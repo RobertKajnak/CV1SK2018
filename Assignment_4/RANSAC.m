@@ -37,6 +37,7 @@ function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, 
             imshow(cat(2, image1, image2));
             hold on;
         end
+        
         for j = 1:length(matches)
             x1 = f1(1,matches(1,j)) ;
             y1 = f1(2,matches(1,j)) ;
@@ -62,8 +63,7 @@ function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, 
             best_m = m;
             best_t = t;        
         end
-        
-        % close figure after displaying
+
          
     end
     
@@ -93,15 +93,13 @@ function [best_transformation, best_inliers]= RANSAC(image1,image2,matches, f1, 
         % imwarp instead of imtransform
         tform = affine2d([best_m'; best_t']);
         matlab_transformed = imwarp(image1, tform);%, 'OutputView', imref2d(size(image1)));
-        figure();
-        %new_image = imresize(new_image,0.6);
+        
         imshow(new_image);
         if show_image==2
-            figure();
+            figure('name','Transformation done using matlab');
             %matlab_transformed = imresize(matlab_transformed,0.6);
             imshow(matlab_transformed);
-            figure()
-            %image2 = imresize(image2, 0.6);
+            figure('name','Original Image');
             imshow(image2);
         end
     end
