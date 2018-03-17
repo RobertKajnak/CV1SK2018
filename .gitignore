@@ -6,3 +6,4 @@
 *.mp4
 deps/deps.jl
 **/photometric/
+FinalProject/Caltech4/ImageData/
