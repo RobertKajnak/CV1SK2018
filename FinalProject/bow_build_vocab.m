@@ -8,14 +8,9 @@ function [idx,C] = bow_build_vocab(d_or_s, sift_type)
     
     for data_cell = {airplanes cars faces motorbikes}
         data = data_cell{:};
-        disp(floor(length(data)/2));
         for i=1:3%floor((length(data)/2)
             file = fullfile(data(i).folder, data(i).name);
             image = imread(file);
-            disp(size(image));
-            disp(file);
-            figure();
-            imshow(image);
             [~, descriptors] = sift(image, d_or_s, sift_type);
             all_descriptors = [all_descriptors; descriptors'];
             

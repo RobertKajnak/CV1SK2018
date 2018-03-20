@@ -1,4 +1,4 @@
-function[keypoints, descriptors] = sift(image, d_or_s, sift_type)
+function[keypoints, descriptors, im] = sift(image, d_or_s, sift_type)
 % sift_type = sift, RGBsift, rgbsift or opponent
 % d_or_s = dsift or sift
 
@@ -31,6 +31,7 @@ if strcmpi(d_or_s, 'sift')
             image = single(image);
             keypoints = [];
             descriptors = [];
+            
             for i= 1:3
                 im_i = single(image(:,:,1)./sum(image,3));
                 [keys_i, descs_i] = vl_sift(im_i);
@@ -80,10 +81,14 @@ elseif strcmpi(d_or_s, 'dsift')
             % convert RGB to rgb
             im = zeros(size(image));
             image = double(image);
+            
             for i= 1:3
                 im(:,:,i) = image(:,:,i)./sum(image,3);
             end
-            [keypoints, descriptors] = vl_phow(single(im), 'color', 'rgb', 'step', 10, 'verbose', 'true');
+            % im can contain NaN values when the sum of RGB=0, replace
+            % those with 0
+            im(isnan(im))=0;
+            [keypoints, descriptors] = vl_phow(single(im), 'color', 'rgb', 'step', 10);
             
         case 'opponentsift'
             % check if image is not grayscale
