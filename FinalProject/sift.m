@@ -1,4 +1,4 @@
-function[keypoints, descriptors, im] = sift(image, d_or_s, sift_type)
+function[keypoints, descriptors] = sift(image, d_or_s, sift_type)
 % sift_type = gray, RGBsift, rgbsift or opponent
 % d_or_s = dsift or sift
 

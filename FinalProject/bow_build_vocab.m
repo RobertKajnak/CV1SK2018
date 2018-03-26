@@ -17,10 +17,7 @@ function [C, A] = bow_build_vocab(d_or_s, sift_type, vocab_size)
             file = fullfile(data(i).folder, data(i).name);
             image = imread(file);
             [~, descriptors] = sift(image, d_or_s, sift_type);
-%             % Take subset of data for dsift
-%             if strcmpi(d_or_s, 'dsift') && size(descriptors, 2) > 1000
-%                 descriptors = datasample(descriptors, 1000, 2, 'Replace', false);
-%             end
+
             all_descriptors = [all_descriptors descriptors];
             
         end
