@@ -14,7 +14,7 @@ if strcmpi(d_or_s, 'sift')
             end
             
             [keypoints, descriptors] = vl_sift(im);
-        case 'RGBsift'
+        case 'RGB'
 
             % check if image is not grayscale
             if size(image, 3) < 3
@@ -27,7 +27,7 @@ if strcmpi(d_or_s, 'sift')
                 descriptors = [descriptors, descs_i];
             end
             
-        case 'rgbsift'
+        case 'nrgb'
             % check if image is not grayscale
             if size(image, 3) < 3
                 return
@@ -43,7 +43,7 @@ if strcmpi(d_or_s, 'sift')
                 descriptors = [descriptors, descs_i];     
             end
             
-        case 'opponentsift'
+        case 'opponent'
             % check if image is not grayscale
             if size(image, 3) < 3
                 return
@@ -72,15 +72,15 @@ elseif strcmpi(d_or_s, 'dsift')
             else
                 im = single(image);
             end
-            [keypoints, descriptors] = vl_dsift(im, 'step', 15);
-        case 'RGBsift'
+            [keypoints, descriptors] = vl_dsift(im, 'step', 20);
+        case 'RGB'
             % check if image is not grayscale
             if size(image, 3) < 3
                 return
             end
-            [keypoints, descriptors] = vl_phow(single(image), 'color', 'rgb', 'step', 15);
+            [keypoints, descriptors] = vl_phow(single(image), 'color', 'rgb', 'step', 20);
             
-        case 'rgbsift'
+        case 'nrgb'
             % check if image is not grayscale
             if size(image, 3) < 3
                 return
@@ -95,14 +95,14 @@ elseif strcmpi(d_or_s, 'dsift')
             % im can contain NaN values when the sum of RGB=0, replace
             % those with 0
             im(isnan(im))=0;
-            [keypoints, descriptors] = vl_phow(single(im), 'color', 'rgb', 'step', 15);
+            [keypoints, descriptors] = vl_phow(single(im), 'color', 'rgb', 'step', 20);
             
-        case 'opponentsift'
+        case 'opponent'
             % check if image is not grayscale
             if size(image, 3) < 3
                 return
             end
-            [keypoints, descriptors] = vl_phow(single(image), 'color', 'opponent', 'step', 15);
+            [keypoints, descriptors] = vl_phow(single(image), 'color', 'opponent', 'step', 20);
     end
 else
     disp('Invalid input');
