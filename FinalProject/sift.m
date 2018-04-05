@@ -85,17 +85,16 @@ elseif strcmpi(d_or_s, 'dsift')
             if size(image, 3) < 3
                 return
             end
+  
             % convert RGB to rgb
-            im = zeros(size(image));
-            image = double(image);
-            
+            image = single(image);
             for i= 1:3
-                im(:,:,i) = image(:,:,i)./sum(image,3);
+                im_i = single(image(:,:,1)./sum(image,3));
+                im_i(isnan(im_i))=0;
+                [keys_i, descs_i] = vl_dsift(im_i, 'step', 20);
+                keypoints = [keypoints, keys_i];
+                descriptors = [descriptors, descs_i];     
             end
-            % im can contain NaN values when the sum of RGB=0, replace
-            % those with 0
-            im(isnan(im))=0;
-            [keypoints, descriptors] = vl_phow(single(im), 'color', 'rgb', 'step', 20);
             
         case 'opponent'
             % check if image is not grayscale
