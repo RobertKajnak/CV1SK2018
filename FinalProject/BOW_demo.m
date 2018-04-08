@@ -26,13 +26,12 @@ function BOW_demo( d_or_s, sift_type, vocab_size, sample_size)
     [C, A] = bow_build_vocab(d_or_s, sift_type, vocab_size);
     
     % safe visual vocabulary for easier later use
-    vocabfile = sprintf('%s%s%s%s%d', d_or_s, '-', sift_type, '-', vocab_size);
+    vocabfile = sprintf('%s%s%s%s%s%d', 'visual vocab mats/', d_or_s, '-', sift_type, '-', vocab_size);
     save(vocabfile, 'C', 'A');
     
     % obtain histograms, train liblinear SVM and evaluate on test images
     disp('training and evaluation');
     [MAP] = evaluate(d_or_s, sift_type, vocab_size, sample_size);
-    disp(MAP);
     
     % generate a HTML from the results
     disp('generating HTML');
