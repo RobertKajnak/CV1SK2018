@@ -25,16 +25,4 @@ motor_ap = average_precision(motorbike_images, 'motorbike');
 MAP = (car_ap + plane_ap + face_ap + motor_ap)/4;
 disp(MAP);
 
-
-function [AP] = average_precision(images, label)
-    AP = 0;
-    pos_count = 0;
-    for i = 1:200
-        if strcmp(images{i, 2}, label)
-            pos_count = pos_count + 1;
-            AP = AP + pos_count/i;
-        end
-    end
-    AP = AP/50;
-end
 end
