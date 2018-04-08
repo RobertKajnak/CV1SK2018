@@ -1,4 +1,4 @@
-function [car_images, airplane_images, face_images, motorbike_images, motor_labels, motorbike_decs] = ...
+function [car_images, airplane_images, face_images, motorbike_images] = ...
     test_SVM(d_or_s, sift_type, vocab_size, models)
 
 car_model = models{1};
@@ -85,12 +85,27 @@ histograms = [car_hist; airplane_hist; face_hist; motor_hist];
 
 labels = repelem([1;-1;-1;-1], 50);
 [~, ~, car_decs] = predict(labels, sparse(histograms), car_model);
+% decision trees
+% [labels,posterior] = predict(car_model, histograms);
+% car_decs = labels.*max(posterior, [], 2);
+
 labels = repelem([-1;1;-1;-1], 50);
 [~, ~, airplane_decs] = predict(labels, sparse(histograms), airplane_model);
+% decision trees
+% [labels,posterior] = predict(airplane_model, histograms);
+% airplane_decs = labels.*max(posterior, [], 2);
+
 labels = repelem([-1;-1;1;-1], 50);
 [~, ~, face_decs] = predict(labels, sparse(histograms), face_model);
+% decision trees
+% [labels,posterior] = predict(face_model, histograms);
+% face_decs = labels.*max(posterior, [], 2);
+
 labels = repelem([-1;-1;-1;1], 50);
-[motor_labels, ~, motorbike_decs] = predict(labels, sparse(histograms), motorbike_model);
+[~, ~, motorbike_decs] = predict(labels, sparse(histograms), motorbike_model);
+% decision trees
+% [labels,posterior] = predict(motorbike_model, histograms);
+% motorbike_decs = labels.*max(posterior, [], 2);
 
 [~, car_sort] = sort(car_decs, 'descend');
 car_images = all_images(car_sort, :);
@@ -101,7 +116,7 @@ airplane_images = all_images(airplane_sort, :);
 [~, face_sort] = sort(face_decs, 'descend');
 face_images = all_images(face_sort, :);
 
-[bike_sorted, motorbike_sort] = sort(motorbike_decs, 'descend');
+[~, motorbike_sort] = sort(motorbike_decs, 'descend');
 motorbike_images = all_images(motorbike_sort, :);
 
 

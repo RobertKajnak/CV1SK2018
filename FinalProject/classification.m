@@ -4,6 +4,7 @@ clusters = load(cluster_file,'C');
 clusters = clusters.C;
 histograms = zeros(4*sample_size,vocab_size);
 
+disp('cars');
 % cars
 car_files = dir(fullfile('Caltech4/ImageData/cars_train', '*.jpg'));
 car_index = randperm(numel(car_files), sample_size);
@@ -18,6 +19,7 @@ for k = 1:sample_size
   histograms(k, :) = h.Values;
 end
 
+disp('planes');
 % airplanes
 airplane_files = dir(fullfile('Caltech4/ImageData/airplanes_train', '*.jpg'));
 airplane_index = randperm(numel(airplane_files), sample_size);
@@ -32,6 +34,7 @@ for k = 1:sample_size
   histograms(sample_size+k, :) = h.Values; 
 end
 
+disp('faces');
 % faces
 faces_files = dir(fullfile('Caltech4/ImageData/faces_train', '*.jpg'));
 faces_index = randperm(numel(faces_files), sample_size);
@@ -46,6 +49,7 @@ for k = 1:sample_size
   histograms(2*sample_size+k, :) = h.Values; 
 end
 
+disp('motorbikes');
 % motorbikes
 motor_files = dir(fullfile('Caltech4/ImageData/motorbikes_train', '*.jpg'));
 motor_index = randperm(numel(motor_files), sample_size);
@@ -79,8 +83,17 @@ switch pos_example
 end
 labels = repelem(labels,sample_size);
 
+% used for SVM
 histograms = sparse(histograms);
 model = train(labels, histograms, '-c 100');
 predict(labels, histograms, model);
+
+disp('decision tree');
+% used for decision trees
+% model = fitctree(histograms, labels);
+% [label,Posterior] = predict(model, histograms);
+% assignin('base', 'tree_label', label);
+% assignin('base', 'tree_decs', Posterior);
+
 end
 
